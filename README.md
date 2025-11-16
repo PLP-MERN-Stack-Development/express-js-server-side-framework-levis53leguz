@@ -1,62 +1,249 @@
-# Express.js RESTful API Assignment
+# 🧩 Week 2: Express.js RESTful API – Product Management
 
-This assignment focuses on building a RESTful API using Express.js, implementing proper routing, middleware, and error handling.
 
-## Assignment Overview
+This project implements a simple **RESTful API** for managing products using **Express.js**.  
+It includes CRUD operations, middleware for logging, authentication, error handling, and advanced features like filtering, pagination, and search.
 
-You will:
-1. Set up an Express.js server
-2. Create RESTful API routes for a product resource
-3. Implement custom middleware for logging, authentication, and validation
-4. Add comprehensive error handling
-5. Develop advanced features like filtering, pagination, and search
+---
 
-## Getting Started
+## 🚀 Features
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Install dependencies:
-   ```
-   npm install
-   ```
-4. Run the server:
-   ```
-   npm start
-   ```
+- 🧱 CRUD operations for products (Create, Read, Update, Delete)
+- 🔐 API key authentication
+- 🪵 Custom request logging middleware
+- ⚠️ Centralized error handling
+- 🔎 Filtering, searching, and pagination support
+- 📊 Product statistics endpoint
 
-## Files Included
+---
 
-- `Week2-Assignment.md`: Detailed assignment instructions
-- `server.js`: Starter Express.js server file
-- `.env.example`: Example environment variables file
+## ⚙️ Setup Instructions
 
-## Requirements
+### 1. Clone the repository
+```bash
+git clone <https://github.com/PLP-MERN-Stack-Development/express-js-server-side-framework-Jsews.git>
+cd week2_assignment
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Postman, Insomnia, or curl for API testing
+2. Install dependencies
+npm install
 
-## API Endpoints
+3. Start the server
+node server.js
 
-The API will have the following endpoints:
 
-- `GET /api/products`: Get all products
-- `GET /api/products/:id`: Get a specific product
-- `POST /api/products`: Create a new product
-- `PUT /api/products/:id`: Update a product
-- `DELETE /api/products/:id`: Delete a product
+You should see:
 
-## Submission
+🚀 Server running on http://localhost:3000
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+4. Test using Postman, Insomnia, or curl
 
-1. Complete all the required API endpoints
-2. Implement the middleware and error handling
-3. Document your API in the README.md
-4. Include examples of requests and responses
+Example:
 
-## Resources
+curl http://localhost:3000/api/products
 
-- [Express.js Documentation](https://expressjs.com/)
-- [RESTful API Design Best Practices](https://restfulapi.net/)
-- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) 
+🔑 Authentication
+
+Some routes require an API key for access.
+Add this header in your requests:
+
+x-api-key: mysecretkey
+
+
+Without it, you’ll get a 401 Unauthorized error.
+
+🧭 API Endpoints
+1️⃣ GET /
+
+Description: Welcome message
+Example:
+
+GET http://localhost:3000/
+
+
+Response:
+
+Welcome to the Product API! Go to /api/products to see all products.
+
+2️⃣ GET /api/products
+
+Description: Get all products with optional filters and pagination
+Query Parameters:
+
+Parameter	Description	Example
+category	Filter by category	?category=electronics
+page	Page number	?page=2
+limit	Items per page	?limit=5
+search	Search by product name	?search=laptop
+
+Example:
+
+GET http://localhost:3000/api/products?category=electronics&page=1&limit=2
+
+
+Response:
+
+{
+  "total": 3,
+  "page": 1,
+  "limit": 2,
+  "data": [
+    {
+      "id": "1",
+      "name": "Laptop",
+      "description": "High-performance laptop with 16GB RAM",
+      "price": 1200,
+      "category": "electronics",
+      "inStock": true
+    }
+  ]
+}
+
+3️⃣ GET /api/products/:id
+
+Description: Get a product by its ID
+Example:
+
+GET http://localhost:3000/api/products/1
+
+
+Response:
+
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "High-performance laptop with 16GB RAM",
+  "price": 1200,
+  "category": "electronics",
+  "inStock": true
+}
+
+4️⃣ POST /api/products
+
+🔐 Protected (requires x-api-key)
+
+Description: Add a new product
+Example:
+
+POST http://localhost:3000/api/products
+Headers:
+  Content-Type: application/json
+  x-api-key: mysecretkey
+
+Body:
+{
+  "name": "Headphones",
+  "description": "Noise-cancelling over-ear headphones",
+  "price": 150,
+  "category": "electronics",
+  "inStock": true
+}
+
+
+Response:
+
+{
+  "id": "uuid-generated",
+  "name": "Headphones",
+  "description": "Noise-cancelling over-ear headphones",
+  "price": 150,
+  "category": "electronics",
+  "inStock": true
+}
+
+5️⃣ PUT /api/products/:id
+
+🔐 Protected (requires x-api-key)
+
+Description: Update an existing product
+Example:
+
+PUT http://localhost:3000/api/products/1
+Headers:
+  Content-Type: application/json
+  x-api-key: mysecretkey
+
+Body:
+{
+  "price": 1100,
+  "inStock": false
+}
+
+
+Response:
+
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "High-performance laptop with 16GB RAM",
+  "price": 1100,
+  "category": "electronics",
+  "inStock": false
+}
+
+6️⃣ DELETE /api/products/:id
+
+🔐 Protected (requires x-api-key)
+
+Description: Delete a product
+Example:
+
+DELETE http://localhost:3000/api/products/3
+Headers:
+  x-api-key: mysecretkey
+
+
+Response:
+
+{ "message": "Product deleted successfully" }
+
+7️⃣ GET /api/stats
+
+Description: Get statistics of products (count by category)
+Example:
+
+GET http://localhost:3000/api/stats
+
+
+Response:
+
+{
+  "totalProducts": 3,
+  "countByCategory": {
+    "electronics": 2,
+    "kitchen": 1
+  }
+}
+
+⚠️ Error Responses
+Code	Description	Example
+400	Bad Request (missing fields)	{ "error": "Missing required fields" }
+401	Unauthorized (no API key)	{ "error": "Unauthorized. Invalid or missing API key." }
+404	Not Found	{ "error": "Product not found" }
+500	Internal Server Error	{ "error": "Internal Server Error" }
+🧪 Testing Tools
+
+Postman
+
+Insomnia
+
+curl (Command line)
+
+🧰 Dependencies
+
+express
+
+body-parser
+
+uuid
+
+Install with:
+
+npm install express body-parser uuid
+
+📄 License
+
+This project is for educational purposes as part of the Week 2 Express.js Assignment.
+
+👩‍💻 Author: Janice Tusiime Sewava
+📅 Date: Week 2 Assignment
+🏫 Course: Backend Development with Express.js
